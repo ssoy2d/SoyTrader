@@ -1,8 +1,8 @@
 import streamlit as st
 import yfinance as yf
 
+
 @st.cache_data(ttl=300)
-def get_market_data():
 def get_market_data():
     markets = {
         "코스피": "^KS11",
