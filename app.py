@@ -171,7 +171,7 @@ elif menu == "📊 종목 분석":
 
                 st.subheader("🤖 GPT 분석 결과")
                 st.write(answer)
-                                st.divider()
+                st.divider()
                 st.subheader("📰 관련 뉴스")
 
                 news_list = get_stock_news(selected_ticker)
