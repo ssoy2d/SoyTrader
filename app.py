@@ -4,6 +4,7 @@ from stock import get_stock_data
 from gpt import ask_gpt
 from config import STOCKS
 from market import get_market_data, format_market_value
+from news import get_stock_news
 
 st.set_page_config(
     page_title="SoyTrader",
@@ -170,6 +171,22 @@ elif menu == "📊 종목 분석":
 
                 st.subheader("🤖 GPT 분석 결과")
                 st.write(answer)
+                                st.divider()
+                st.subheader("📰 관련 뉴스")
+
+                news_list = get_stock_news(selected_ticker)
+
+                if not news_list:
+                    st.info("관련 뉴스를 가져오지 못했어요.")
+                else:
+                    for news in news_list:
+                        st.markdown(f"**{news['title']}**")
+                        st.caption(news["publisher"])
+
+                        if news["link"]:
+                            st.markdown(f"[기사 보기]({news['link']})")
+
+                        st.write("---")
 
 elif menu == "📰 뉴스 분석":
     st.header("📰 뉴스 분석")
