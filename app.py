@@ -179,12 +179,44 @@ elif menu == "📊 종목 분석":
                 if not news_list:
                     st.info("관련 뉴스를 가져오지 못했어요.")
                 else:
-                    for news in news_list:
-                        st.markdown(f"**{news['title']}**")
+                    for i, news in enumerate(news_list):
+                        st.markdown(f"### {news['title']}")
                         st.caption(news["publisher"])
 
                         if news["link"]:
                             st.markdown(f"[기사 보기]({news['link']})")
+
+                        if st.button(f"🧠 AI 뉴스 분석하기 {i+1}", key=f"news_ai_{i}"):
+                            news_prompt = f"""
+너는 개인 투자자를 위한 AI 뉴스 애널리스트야.
+
+아래 뉴스를 투자 관점에서 분석해줘.
+
+[종목]
+{selected_name}
+
+[뉴스 제목]
+{news['title']}
+
+[뉴스 요약]
+{news['summary']}
+
+아래 형식으로 작성해줘.
+
+1. 핵심 내용
+2. 이 뉴스가 주가에 미칠 수 있는 영향
+3. 긍정 요인
+4. 리스크
+5. 투자자가 봐야 할 포인트
+6. 한줄 요약
+
+단, 확정적인 매수/매도 지시는 하지 말고 신중하게 말해줘.
+"""
+
+                            with st.spinner("GPT가 뉴스를 분석 중이에요..."):
+                                news_answer = ask_gpt(news_prompt)
+
+                            st.info(news_answer)
 
                         st.write("---")
 
