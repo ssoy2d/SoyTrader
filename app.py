@@ -8,7 +8,6 @@ from views.news_page import show_news_page
 from views.portfolio_page import show_portfolio_page
 from views.settings_page import show_settings_page
 
-
 st.set_page_config(
     page_title="SoyTrader",
     page_icon="🤖",

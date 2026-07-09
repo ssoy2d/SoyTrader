@@ -4,8 +4,9 @@ from config import STOCKS
 from services.stock import get_stock_data
 from services.gpt import ask_gpt
 from services.news import get_stock_news
-from components.charts import show_advanced_chart
 from services.ai_score import calculate_ai_score
+from services.favorites import add_favorite, remove_favorite, is_favorite
+from components.charts import show_advanced_chart
 
 
 def show_stock_page():
@@ -18,6 +19,23 @@ def show_stock_page():
     for company, ticker in STOCKS.values():
         if company == selected_name:
             selected_ticker = ticker
+
+    col_a, col_b = st.columns([3, 1])
+
+    with col_a:
+        st.caption(f"선택 종목: {selected_name} / {selected_ticker}")
+
+    with col_b:
+        if is_favorite(selected_ticker):
+            if st.button("⭐ 관심종목 해제", use_container_width=True):
+                remove_favorite(selected_ticker)
+                st.success("관심종목에서 제거했어요.")
+                st.rerun()
+        else:
+            if st.button("⭐ 관심종목 추가", use_container_width=True):
+                add_favorite(selected_ticker)
+                st.success("관심종목에 추가했어요.")
+                st.rerun()
 
     st.divider()
     st.subheader("📈 전문가 차트")
@@ -32,6 +50,7 @@ def show_stock_page():
                 return
 
             col1, col2, col3 = st.columns(3)
+
             col1.metric("현재가", f'{stock["price"]:,.0f}원')
             col2.metric("등락률", f'{stock["change"]:.2f}%')
             col3.metric("거래량", f'{stock["volume"]:,.0f}')
