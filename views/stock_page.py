@@ -5,10 +5,12 @@ from services.stock import get_stock_data
 from services.gpt import ask_gpt
 from services.news import get_stock_news
 from components.charts import show_advanced_chart
+from services.ai_score import calculate_ai_score
 
 
 def show_stock_page():
     st.title("📊 종목 분석")
+
     stock_names = [company for company, ticker in STOCKS.values()]
     selected_name = st.selectbox("🔍 종목 선택", stock_names)
 
@@ -30,10 +32,35 @@ def show_stock_page():
                 return
 
             col1, col2, col3 = st.columns(3)
-
             col1.metric("현재가", f'{stock["price"]:,.0f}원')
             col2.metric("등락률", f'{stock["change"]:.2f}%')
             col3.metric("거래량", f'{stock["volume"]:,.0f}')
+
+            score = calculate_ai_score(stock)
+
+            st.divider()
+            st.subheader("🤖 AI SCORE")
+
+            if score >= 80:
+                color = "🟢"
+            elif score >= 60:
+                color = "🟡"
+            else:
+                color = "🔴"
+
+            stars = "⭐" * max(1, round(score / 20))
+
+            st.markdown(f"## {color} {score}점")
+            st.markdown(stars)
+
+            if score >= 80:
+                st.success("AI 의견 : 매우 긍정적인 흐름입니다.")
+            elif score >= 60:
+                st.info("AI 의견 : 긍정적인 흐름입니다.")
+            elif score >= 40:
+                st.warning("AI 의견 : 관망이 필요한 구간입니다.")
+            else:
+                st.error("AI 의견 : 리스크가 큰 구간입니다.")
 
             prompt = f"""
 너는 대한민국 최고의 주식 애널리스트다.
