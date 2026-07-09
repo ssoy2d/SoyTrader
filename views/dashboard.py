@@ -1,5 +1,6 @@
 import streamlit as st
 from datetime import datetime
+from services.briefing import create_daily_briefing
 
 from services.market import get_market_data, format_market_value
 from services.gpt import ask_gpt
@@ -9,12 +10,12 @@ def show_dashboard():
     today = datetime.now().strftime("%Y.%m.%d")
 
     st.markdown(f"""
-    <div class="header">
-        <h1>🤖 SoyTrader</h1>
-        <p>AI 투자비서</p>
-        <p>📅 {today}</p>
-    </div>
-    """, unsafe_allow_html=True)
+<div class="hero-card">
+    <h1>🤖 SoyTrader</h1>
+    <p>AI Investment Assistant</p>
+    <p>📅 {today}</p>
+</div>
+""", unsafe_allow_html=True)
 
     with st.spinner("📈 최신 시장 데이터를 불러오는 중..."):
         market_data = get_market_data()
@@ -26,6 +27,18 @@ def show_dashboard():
     sox = market_data.get("필라델피아 반도체")
     exchange = market_data.get("원/달러 환율")
 
+    st.markdown("## 🌅 오늘의 AI 브리핑")
+
+    if st.button("🤖 오늘 브리핑 생성", use_container_width=True):
+        with st.spinner("SoyTrader가 오늘 시장을 분석 중이에요..."):
+            daily_briefing = create_daily_briefing(market_data)
+
+        st.markdown(f"""
+        <div class="ai-box">
+            {daily_briefing}
+        </div>
+        """, unsafe_allow_html=True)
+    
     st.markdown("## 🟢 AI Market Score")
     st.success("82점")
     st.info("오늘은 반도체 업종과 미국 기술주 흐름을 함께 봐야 하는 장입니다.")
